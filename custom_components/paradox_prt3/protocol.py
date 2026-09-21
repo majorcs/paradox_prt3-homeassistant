@@ -266,7 +266,117 @@ EVENT_GROUPS = {
 }
 
 
-def describe_event(event: SystemEvent) -> str:
-    """Return a human readable description of a system event."""
+# Groups whose event number is a zone, a user code, a keyswitch or a door.
+_ZONE_GROUPS = {0, 1, 2, 3, 8, 23, 24, 25, 26, 27, 32, 33, 34, 41, 42, 43, 44}
+_USER_GROUPS = {5, 9, 10, 13, 14, 16, 17, 19, 20, 28, 29, 31}
+_KEYSWITCH_GROUPS = {11, 15, 18, 21}
+
+_NON_REPORTABLE = {
+    0: "TLM trouble",
+    1: "Smoke detector reset",
+    2: "Arm with no entry delay",
+    3: "Arm in stay mode",
+    4: "Arm in away mode",
+    5: "Full arm when in stay mode",
+    6: "Voice module access",
+    7: "Remote control access",
+    8: "PC fail to communicate",
+    9: "Midnight",
+    10: "NEware user login",
+    11: "NEware user logout",
+    12: "User initiated callup",
+    13: "Force answer",
+    14: "Force hangup",
+}
+_SPECIAL_ARMING = {
+    0: "Auto arming",
+    1: "Arming by WinLoad",
+    2: "Late to close",
+    3: "No movement arming",
+    4: "Partial arming",
+    5: "One-touch arming",
+    8: "Voice module arming",
+}
+_SPECIAL_DISARM = {
+    0: "Auto arm cancelled",
+    1: "One-touch stay/instant disarm",
+    2: "Disarming with WinLoad",
+    3: "Disarming with WinLoad after alarm",
+    4: "WinLoad cancelled alarm",
+    8: "Voice module disarming",
+}
+_SPECIAL_ALARM = {
+    0: "Emergency panic",
+    1: "Medical panic",
+    2: "Fire panic",
+    3: "Recent closing",
+    4: "Police code",
+    5: "Global shutdown",
+}
+_TROUBLE = {
+    0: "TLM trouble",
+    1: "AC failure",
+    2: "Battery failure",
+    3: "Auxiliary current limit",
+    4: "Bell current limit",
+    5: "Bell absent",
+    6: "Clock trouble",
+    7: "Global fire loop",
+}
+_MODULE_TROUBLE = {
+    0: "Combus fault",
+    1: "Module tamper",
+    2: "ROM/RAM error",
+    3: "TLM trouble",
+    4: "Fail to communicate",
+    5: "Printer fault",
+    6: "AC failure",
+    7: "Battery failure",
+    8: "Auxiliary failure",
+}
+_NAMED_NUMBERS = {
+    4: _NON_REPORTABLE,
+    12: _SPECIAL_ARMING,
+    22: _SPECIAL_DISARM,
+    30: _SPECIAL_ALARM,
+    36: _TROUBLE,
+    37: _TROUBLE,
+    38: _MODULE_TROUBLE,
+    39: _MODULE_TROUBLE,
+    35: {0: "Keypad lockout"},
+    7: {0: "One-touch bypass programming"},
+}
+
+
+def describe_event(
+    event: SystemEvent,
+    *,
+    zone_label: str | None = None,
+    area_label: str | None = None,
+) -> str:
+    """Return a readable description, e.g. ``Zone open: Kitchen door (zone 4), Ground floor``.
+
+    ``zone_label``/``area_label`` are the names stored in the panel, when known.
+    """
     group = EVENT_GROUPS.get(event.group, f"Event group {event.group}")
-    return f"{group} (number {event.number}, area {event.area})"
+    number = event.number
+    if event.group in _ZONE_GROUPS:
+        subject = f"zone {number}" if not zone_label else f"{zone_label} (zone {number})"
+    elif event.group in _USER_GROUPS:
+        subject = f"user {number}"
+    elif event.group in _KEYSWITCH_GROUPS:
+        subject = f"keyswitch {number}"
+    elif event.group == 6:
+        subject = f"door {number}"
+    elif event.group == 40:
+        subject = f"telephone number {number}"
+    elif event.group == 7 and number:
+        subject = f"user {number}"
+    elif name := _NAMED_NUMBERS.get(event.group, {}).get(number):
+        subject = name
+    else:
+        subject = f"number {number}"
+    text = f"{group}: {subject}"
+    if event.area:
+        text += f", {area_label or f'area {event.area}'}"
+    return text

@@ -78,7 +78,7 @@ Enter `socket://192.0.2.10:4000` (raw) or `rfc2217://192.0.2.10:4001` (RFC2217) 
 ## Entities
 - **Alarm control panel** per area: arm away (regular), arm home (stay), arm night (instant), disarm. The user code is asked at every action and is never stored.
 - **Binary sensor** per zone, with a device class guessed from the label (motion, door, window, tamper, smoke). The protocol does not report the zone type, so change the class in the entity settings if the guess is wrong.
-- Diagnostic sensors (disabled by default unless noted): per-zone tamper, fire loop trouble, alarm, fire alarm, supervision lost, low battery; per-area not ready and trouble (enabled), zone in memory, in programming, strobe; panel link; 30 virtual PGMs; last event.
+- Diagnostic sensors (disabled by default unless noted): per-zone tamper, fire loop trouble, alarm, fire alarm, supervision lost, low battery; per-area not ready and trouble (enabled), zone in memory, in programming, strobe; panel link; 30 virtual PGMs; last event (in words, e.g. `Zone open: Kitchen door (zone 4), Ground floor`, with the raw `G001N004A002` code as an attribute) and last event time.
 
 Zone changes are pushed by the panel in real time; a poll every 5 minutes corrects drift.
 

@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import timedelta
+from datetime import datetime, timedelta
 import logging
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.util import dt as dt_util
 
 from .client import PRT3Client, PRT3Error
 from .const import CONF_ENABLED_AREAS, CONF_ENABLED_ZONES, DOMAIN, POLL_INTERVAL_SECONDS
@@ -67,6 +68,7 @@ class PanelData:
     panel_link_ok: bool = True
     connected: bool = False
     last_event: SystemEvent | None = None
+    last_event_time: datetime | None = None
 
 
 class PRT3Coordinator(DataUpdateCoordinator[PanelData]):
@@ -178,6 +180,7 @@ class PRT3Coordinator(DataUpdateCoordinator[PanelData]):
 
     def _handle_event(self, event: SystemEvent) -> None:
         self._state.last_event = event
+        self._state.last_event_time = dt_util.utcnow()
         zone = self._state.zones.get(event.number)
         if zone is not None:
             self._apply_zone_event(zone, event.group)
