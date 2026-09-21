@@ -1,0 +1,14 @@
+{
+  "domain": "paradox_prt3",
+  "name": "Paradox PRT3",
+  "codeowners": ["@majorcs"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/majorcs/paradox_prt3-homeassistant",
+  "integration_type": "hub",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/majorcs/paradox_prt3-homeassistant/issues",
+  "loggers": ["custom_components.paradox_prt3"],
+  "requirements": ["pyserial-asyncio-fast==0.16"],
+  "version": "2026.09.21.1"
+}

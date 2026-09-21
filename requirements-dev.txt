@@ -1,0 +1,3 @@
+pytest-homeassistant-custom-component
+pyserial-asyncio-fast==0.16
+pytest-cov

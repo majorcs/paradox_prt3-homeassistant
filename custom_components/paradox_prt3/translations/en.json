@@ -1,0 +1,38 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to the Paradox PRT3",
+        "description": "Pick the USB serial port, or enter a serial-over-network URL such as `socket://192.0.2.10:4000` (raw) or `rfc2217://192.0.2.10:4001`. The PRT3 must be in Home Automation mode with the ASCII protocol (section [016]). Discovery reads all labels and takes about half a minute.",
+        "data": {
+          "port": "Serial port or URL",
+          "baudrate": "Baud rate",
+          "codec": "Label encoding"
+        },
+        "data_description": {
+          "codec": "Character set of the names stored in the panel. Hungarian and other Central European panels use cp852."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not open the serial port.",
+      "no_response": "The PRT3 did not answer. Check the baud rate and that the PRT3 is in Home Automation mode.",
+      "unknown": "Unexpected error, see the log."
+    },
+    "abort": {
+      "already_configured": "This port is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Areas and zones",
+        "description": "Choose which discovered areas and zones become entities.",
+        "data": {
+          "enabled_areas": "Areas",
+          "enabled_zones": "Zones"
+        }
+      }
+    }
+  }
+}

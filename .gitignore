@@ -1,0 +1,19 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
+.env
+*.token
+*.key
+
+# Third-party manuals (Paradox copyright) and local notes - never commit
+docs/architecture.md
+docs/current-state.md
+docs/implementation-plan.md
+docs/testing.md
+CLAUDE.md
+ASCII_programming_guide_PRT3.pdf
+installation_manual_PRT3.pdf
+plan.md
