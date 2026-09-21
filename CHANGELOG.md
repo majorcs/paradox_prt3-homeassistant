@@ -1,3 +1,12 @@
+## 2026.09.21.2
+
+### Added
+- **Last event time** diagnostic sensor (timestamp of the most recent panel event).
+
+### Changed
+- The **Last event** sensor state is now a readable description built from the panel's event tables and its zone/area names (for example `Zone open: Kitchen door (zone 4), Ground floor`). The raw `G001N004A002` code moved to the `code`, `group`, `number` and `area` attributes; automations that matched the old state text need updating.
+- Attributes of both last-event sensors are excluded from the recorder. The README explains how to exclude their states too.
+
 ## 2026.09.21.1
 
 ### Added
