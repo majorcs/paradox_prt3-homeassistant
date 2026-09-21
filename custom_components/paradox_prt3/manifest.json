@@ -10,5 +10,5 @@
   "issue_tracker": "https://github.com/majorcs/paradox_prt3-homeassistant/issues",
   "loggers": ["custom_components.paradox_prt3"],
   "requirements": ["pyserial-asyncio-fast==0.16"],
-  "version": "2026.09.21.1"
+  "version": "2026.09.21.2"
 }

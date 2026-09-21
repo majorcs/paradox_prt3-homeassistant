@@ -112,5 +112,34 @@ def test_bad_arm_mode_rejected() -> None:
 
 
 def test_describe_event() -> None:
-    assert "Zone open" in describe_event(SystemEvent(1, 9, 1))
-    assert "Event group 99" in describe_event(SystemEvent(99, 1, 1))
+    assert describe_event(SystemEvent(1, 9, 1)) == "Zone open: zone 9, area 1"
+    assert describe_event(SystemEvent(99, 1, 0)) == "Event group 99: number 1"
+
+
+def test_describe_event_uses_names() -> None:
+    event = SystemEvent(1, 4, 2)
+    assert (
+        describe_event(event, zone_label="Kitchen door", area_label="Ground floor")
+        == "Zone open: Kitchen door (zone 4), Ground floor"
+    )
+
+
+@pytest.mark.parametrize(
+    ("event", "expected"),
+    [
+        (SystemEvent(9, 5, 1), "Arming with master: user 5, area 1"),
+        (SystemEvent(11, 3, 1), "Arming with keyswitch: keyswitch 3, area 1"),
+        (SystemEvent(6, 7, 0), "User/card access on door: door 7"),
+        (SystemEvent(40, 2, 0), "Fail to communicate on telephone number: telephone number 2"),
+        (SystemEvent(4, 4, 1), "Non-reportable event: Arm in away mode, area 1"),
+        (SystemEvent(12, 5, 2), "Special arming: One-touch arming, area 2"),
+        (SystemEvent(30, 0, 1), "Special alarm: Emergency panic, area 1"),
+        (SystemEvent(36, 1, 0), "Trouble event: AC failure"),
+        (SystemEvent(38, 4, 0), "Module trouble: Fail to communicate"),
+        (SystemEvent(7, 0, 1), "Bypass programming access: One-touch bypass programming, area 1"),
+        (SystemEvent(7, 12, 1), "Bypass programming access: user 12, area 1"),
+        (SystemEvent(36, 99, 0), "Trouble event: number 99"),
+    ],
+)
+def test_describe_event_groups(event: SystemEvent, expected: str) -> None:
+    assert describe_event(event) == expected

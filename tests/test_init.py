@@ -74,8 +74,24 @@ async def test_zone_events_update_state(
     assert hass.states.get(ZONE_MOTION).state == "off"
 
     sensor = hass.states.get("sensor.paradox_prt3_test_last_event")
-    assert sensor.state == "G000N002A001"
-    assert "Zone OK" in sensor.attributes["description"]
+    assert sensor.state == "Zone OK: Haloszoba M (zone 2), Emelet"
+    assert sensor.attributes["code"] == "G000N002A001"
+    assert (sensor.attributes["group"], sensor.attributes["number"], sensor.attributes["area"]) == (0, 2, 1)
+
+
+async def test_last_event_time(
+    hass: HomeAssistant, setup_integration: MockConfigEntry, panel: FakePanel
+) -> None:
+    time_entity = "sensor.paradox_prt3_test_last_event_time"
+    assert hass.states.get(time_entity).state == STATE_UNKNOWN
+    assert hass.states.get("sensor.paradox_prt3_test_last_event").state == STATE_UNKNOWN
+
+    panel.push("G001N002A001")
+    await settle(hass)
+    stamp = dt_util.parse_datetime(hass.states.get(time_entity).state)
+    assert stamp is not None
+    assert abs((dt_util.utcnow() - stamp).total_seconds()) < 30
+    assert hass.states.get(time_entity).attributes["device_class"] == "timestamp"
 
 
 async def test_zone_flag_events(
@@ -249,3 +265,15 @@ async def test_poll_failure_marks_update_failed(
     panel.zone_status.pop(2)
     await coordinator.async_refresh()
     assert not coordinator.last_update_success
+
+
+async def test_last_event_attributes_are_not_recorded() -> None:
+    from homeassistant.const import MATCH_ALL
+
+    from custom_components.paradox_prt3.sensor import (
+        PRT3LastEventSensor,
+        PRT3LastEventTimeSensor,
+    )
+
+    for sensor in (PRT3LastEventSensor, PRT3LastEventTimeSensor):
+        assert MATCH_ALL in sensor._unrecorded_attributes
