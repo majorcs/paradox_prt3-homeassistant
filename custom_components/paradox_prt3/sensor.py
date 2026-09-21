@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import Any
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
-from homeassistant.const import EntityCategory
+from homeassistant.const import MATCH_ALL, EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
@@ -34,6 +34,8 @@ class PRT3LastEventSensor(PRT3Entity, SensorEntity):
 
     _attr_entity_category = EntityCategory.DIAGNOSTIC
     _attr_name = "Last event"
+    # The raw code repeats what the state says; keep it out of the database.
+    _unrecorded_attributes = frozenset({MATCH_ALL})
 
     def __init__(self, coordinator: PRT3Coordinator) -> None:
         super().__init__(coordinator, "last_event")
@@ -73,6 +75,7 @@ class PRT3LastEventTimeSensor(PRT3Entity, SensorEntity):
     _attr_device_class = SensorDeviceClass.TIMESTAMP
     _attr_entity_category = EntityCategory.DIAGNOSTIC
     _attr_name = "Last event time"
+    _unrecorded_attributes = frozenset({MATCH_ALL})
 
     def __init__(self, coordinator: PRT3Coordinator) -> None:
         super().__init__(coordinator, "last_event_time")

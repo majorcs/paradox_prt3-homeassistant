@@ -265,3 +265,15 @@ async def test_poll_failure_marks_update_failed(
     panel.zone_status.pop(2)
     await coordinator.async_refresh()
     assert not coordinator.last_update_success
+
+
+async def test_last_event_attributes_are_not_recorded() -> None:
+    from homeassistant.const import MATCH_ALL
+
+    from custom_components.paradox_prt3.sensor import (
+        PRT3LastEventSensor,
+        PRT3LastEventTimeSensor,
+    )
+
+    for sensor in (PRT3LastEventSensor, PRT3LastEventTimeSensor):
+        assert MATCH_ALL in sensor._unrecorded_attributes
